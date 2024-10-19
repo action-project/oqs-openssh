@@ -36,6 +36,10 @@ case "$DISTRO" in
     ubuntu*)
         if [[ $OPERATION == 'install' ]] ; then
             sudo apt install autoconf automake cmake gcc libtool libssl-dev make ninja-build zlib1g-dev libfido2-1 libfido2-dev libfido2-doc fido2-tools openssl -y
+            sudo mkdir -p -m 0755 /var/empty
+            sudo groupadd sshd || true
+            sudo useradd sshd || true
+            sudo usermod -g sshd -c 'sshd privsep' -d /var/empty -s /bin/false sshd
         fi
         if [[ $OPERATION == 'suffix' ]] ; then
             echo "lib"
