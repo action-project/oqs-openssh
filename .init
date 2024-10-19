@@ -1,0 +1,49 @@
+#!/bin/bash
+set -eo pipefail
+
+INVALID=$2
+if [[ -n $INVALID ]]; then
+  echo "only one operation allowed per command"
+  exit 1
+fi
+
+OPERATION=$1
+case "$OPERATION" in
+  install)
+    OPERATION=install
+    ;;
+  suffix)
+    OPERATION=suffix
+    ;;
+  *)
+    echo "Unsupported operation"
+    exit 1
+    ;;
+esac
+
+DISTRO=$(cat /etc/os-release | grep ^ID= | cut -d "=" -f 2)
+LIB_SUFFIX=
+case "$DISTRO" in
+    fedora*)
+        if [[ $OPERATION == 'install' ]] ; then
+            sudo dnf install autoconf automake cmake gcc libtool openssl-devel make ninja-build zlib-devel libfido2 libfido2-devel fido2-tools openssl -y
+        fi
+        if [[ $OPERATION == 'suffix' ]] ; then
+            echo "lib64"
+        fi
+        exit 0
+        ;;
+    ubuntu*)
+        if [[ $OPERATION == 'install' ]] ; then
+            sudo apt install autoconf automake cmake gcc libtool libssl-dev make ninja-build zlib1g-dev libfido2-1 libfido2-dev libfido2-doc fido2-tools openssl -y
+        fi
+        if [[ $OPERATION == 'suffix' ]] ; then
+            echo "lib"
+        fi
+        exit 0
+        ;;
+    *)
+        echo "unsupported distribution"
+        exit 1
+        ;;
+esac

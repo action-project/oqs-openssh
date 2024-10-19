@@ -1,0 +1,14 @@
+#!/bin/bash
+set -ueox pipefail
+
+PARENT_DIR=$(pwd)
+SCRIPT_DIR=$(dirname $(realpath "$0"))
+
+git submodule update
+cd "${SCRIPT_DIR}"
+make tests -e LTESTS=""
+
+cd "${PARENT_DIR}"
+
+
+
